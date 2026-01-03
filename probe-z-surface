@@ -23,7 +23,8 @@ G0 Z#104(Backoff)
 G38.2 Z-#105 F#103(Slow probe -Z)
 
 (Store Z position)
-#125 = #5063
+#125 = 1
+#125 = #1927
 
 G0 Z#104(Retract from surface)
 G90(Absolute mode)
@@ -31,8 +32,8 @@ G90(Absolute mode)
 (==== SET WORK ZERO AT TOP SURFACE ====)
 G4 P-1(Press START to set Z zero at top surface)
 
-(Set Z work coordinate system G54)
-G10 L20 P1 Z#125
+(Set Z work coordinate system G54 - direct parameter write)
+#802 = #125
 
 (Move to safe height above work zero)
 G0 Z5.0

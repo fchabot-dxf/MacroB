@@ -30,7 +30,8 @@ G0 X#104(Backoff)
 G38.2 X-#105 F#103(Slow probe -X)
 
 (Store X position with tip radius compensation)
-#120 = #5061 + #110
+#120 = 1
+#120 = #1925 + #110
 
 G0 X#104(Retract from edge)
 G90(Absolute mode)
@@ -44,7 +45,8 @@ G0 Y#104(Backoff)
 G38.2 Y-#105 F#103(Slow probe -Y)
 
 (Store Y position with tip radius compensation)
-#121 = #5062 + #110
+#121 = 1
+#121 = #1926 + #110
 
 G0 Y#104(Retract from edge)
 G90(Absolute mode)
@@ -57,8 +59,9 @@ G4 P-1(Press START to set work zero)
 #130 = #120
 #131 = #121
 
-(Set work coordinate system G54)
-G10 L20 P1 X#130 Y#131
+(Set work coordinate system G54 - direct parameter write)
+#800 = #130
+#801 = #131
 
 (Move to work zero position)
 G0 X0 Y0

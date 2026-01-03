@@ -201,10 +201,12 @@ All macros use `G4 P-1` for infinite dwell, which pauses the program until the o
 - **#1505:** Display formatter (-5000 triggers output)
 - **#2070:** User input prompt variable
 
-### Coordinate System
-- Macros set **G54** work coordinate system (WCS)
-- Previous G54 values are overwritten
-- Use `G10 L20 P2` to set G55 if needed for multiple setups
+### Coordinate System (DDCS EXPERT Specific)
+- Macros set **G54** work coordinate system (WCS) via direct parameter writes
+- G54 offsets: **#800** (X), **#801** (Y), **#802** (Z), **#803** (A), **#804** (B)
+- G55 offsets: **#810-#814**, G56: **#815-#819**, G57: **#820-#824**, etc.
+- **Note:** DDCS EXPERT does NOT support G10 L20 - use direct parameter writes instead
+- Previous G54 values are overwritten when running probe macros
 
 ---
 
@@ -220,11 +222,20 @@ Tests variable persistence across power cycles.
 
 ## Technical Details
 
-**Platform:** DDCS EXPERT CNC Controller
-**Language:** G-code macro dialect
+**Platform:** DDCS EXPERT M350 CNC Controller
+**Language:** G-code macro dialect (DDCS EXPERT specific)
 **Probing Commands:** G38.2 (probe toward workpiece)
-**Coordinate Systems:** G10 L20 (set work coordinate)
-**File Format:** Plain text, no file extension required
+**Probe Position Variables:** #1925 (X), #1926 (Y), #1927 (Z) - machine coordinates after probe trigger
+**Machine Position Variables:** #880 (X), #881 (Y), #882 (Z), #883 (A), #884 (B)
+**WCS Offset Setting:** Direct parameter writes to #800-#804 (G54), #810-#814 (G55), etc.
+**File Format:** Plain text, no file extension required (.nc optional)
+**Encoding:** UTF-8 without BOM, CRLF or LF line endings
+
+### DDCS EXPERT Limitations
+- **G10 L20 NOT supported** - causes unwanted motion instead of setting offsets
+- **G53 with hardcoded values unreliable** - use incremental moves or variables
+- **Variable priming required** - always prime variables before writing #880/#881 to them
+- Uses non-standard FANUC variable addresses for WCS offsets
 
 ---
 
