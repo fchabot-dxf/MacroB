@@ -32,8 +32,14 @@ G90(Absolute mode)
 (==== SET WORK ZERO AT TOP SURFACE ====)
 G4 P-1(Press START to set Z zero at top surface)
 
-(Set Z work coordinate system G54 - direct parameter write)
-#802 = #125
+(Detect active WCS and calculate offset address)
+#150 = #578(Active WCS: 1=G54, 2=G55, etc)
+#151 = [#150 - 1] * 10(WCS stride offset)
+#152 = 800 + #151(Base address for active WCS)
+#154 = #152 + 2(Z offset address)
+
+(Set Z work coordinate system - active WCS)
+#[#154] = #125(Write Z offset to active WCS)
 
 (Move to safe height above work zero)
 G0 Z5.0

@@ -44,9 +44,14 @@ G90(Absolute mode)
 (==== SET WORK ZERO ====)
 G4 P-1(Press START to set work zero at edge)
 
-(Set work coordinate based on edge selection - direct parameter write)
+(Detect active WCS and calculate offset address)
+#150 = #578(Active WCS: 1=G54, 2=G55, etc)
+#151 = [#150 - 1] * 10(WCS stride offset)
+#152 = 800 + #151(Base address for active WCS)
+
+(Set work coordinate based on edge selection - active WCS)
 (For -X edge: set X=0 at probed position)
-#800 = #120
+#[#152] = #120(Write X offset to active WCS)
 
 (Move to work zero)
 G0 X0

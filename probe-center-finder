@@ -93,9 +93,15 @@ G90(Absolute mode)
 (==== SET WORK ZERO AT CENTER ====)
 G4 P-1(Press START to set work zero at center)
 
-(Set work coordinate system G54 at center - direct parameter write)
-#800 = #130
-#801 = #131
+(Detect active WCS and calculate offset addresses)
+#150 = #578(Active WCS: 1=G54, 2=G55, etc)
+#151 = [#150 - 1] * 10(WCS stride offset)
+#152 = 800 + #151(Base address for active WCS)
+#153 = #152 + 1(Y offset address)
+
+(Set work coordinate system at center - active WCS)
+#[#152] = #130(Write X offset to active WCS)
+#[#153] = #131(Write Y offset to active WCS)
 
 (Move to work zero - center position)
 G0 X0 Y0
