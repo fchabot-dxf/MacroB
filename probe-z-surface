@@ -33,6 +33,7 @@ G90(Absolute mode)
 G4 P-1(Press START to set Z zero at top surface)
 
 (Detect active WCS and calculate offset address)
+#150 = 1(Prime variable)
 #150 = #578(Active WCS: 1=G54, 2=G55, etc)
 #151 = [#150 - 1] * 5(WCS stride offset)
 #152 = 805 + #151(Base address for active WCS)
