@@ -205,8 +205,8 @@ All macros use `G4 P-1` for infinite dwell, which pauses the program until the o
 - Macros **automatically detect the active WCS** (G54-G59) using **#578**
 - Work offsets are written to the **currently active** work coordinate system
 - No need to switch to G54 - macros work with whichever WCS is active
-- WCS offset addresses: G54=#800-804, G55=#810-814, G56=#815-819, etc.
-- Calculation: Base address = 800 + ((#578 - 1) × 10)
+- WCS offset addresses: G54=#805-809, G55=#810-814, G56=#815-819, G57=#820-824, G58=#825-829, G59=#830-834
+- Calculation: Base address = **805** + ((#578 - 1) × **5**)
 - **Note:** DDCS EXPERT does NOT support G10 L20 - direct parameter writes used instead
 
 ---
@@ -229,7 +229,8 @@ Tests variable persistence across power cycles.
 **Probe Position Variables:** #1925 (X), #1926 (Y), #1927 (Z) - machine coordinates after probe trigger
 **Machine Position Variables:** #880 (X), #881 (Y), #882 (Z), #883 (A), #884 (B)
 **Active WCS Detection:** #578 (1=G54, 2=G55, 3=G56, 4=G57, 5=G58, 6=G59)
-**WCS Offset Setting:** Direct parameter writes using calculated addresses based on active WCS
+**WCS Offset Addresses:** G54=#805-809, G55=#810-814, G56=#815-819, G57=#820-824, G58=#825-829, G59=#830-834
+**WCS Offset Calculation:** Base = 805 + ((#578 - 1) × 5), then use indirect addressing #[base]
 **File Format:** Plain text, no file extension required (.nc optional)
 **Encoding:** UTF-8 without BOM, CRLF or LF line endings
 
