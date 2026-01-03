@@ -1,0 +1,72 @@
+(3D PROBE - CORNER FINDER)
+(Finds workpiece corner and sets work zero)
+(Run probe-config first to set calibration values)
+
+(Corner Selection:)
+(1 = Front Left  -X -Y)
+(2 = Front Right +X -Y)
+(3 = Rear Right  +X +Y)
+(4 = Rear Left   -X +Y)
+
+#2070 = 1(Select corner 1-4:)
+
+(Load probe configuration)
+#100 = #56(Probe tip diameter)
+#101 = #57(Safe retract distance)
+#102 = #58(Fast probe feedrate)
+#103 = #59(Slow probe feedrate)
+#104 = #60(Probe backoff distance)
+#105 = #61(Overtravel distance)
+
+(Calculate probe tip radius)
+#110 = #100 / 2
+
+(==== PROBE X AXIS - FIRST EDGE ====)
+G4 P-1(Press START to probe X axis)
+
+G91(Incremental mode)
+G38.2 X-#101 F#102(Fast probe -X)
+G0 X#104(Backoff)
+G38.2 X-#105 F#103(Slow probe -X)
+
+(Store X position with tip radius compensation)
+#120 = #5061 + #110
+
+G0 X#104(Retract from edge)
+G90(Absolute mode)
+
+(==== PROBE Y AXIS - SECOND EDGE ====)
+G4 P-1(Press START to probe Y axis)
+
+G91(Incremental mode)
+G38.2 Y-#101 F#102(Fast probe -Y)
+G0 Y#104(Backoff)
+G38.2 Y-#105 F#103(Slow probe -Y)
+
+(Store Y position with tip radius compensation)
+#121 = #5062 + #110
+
+G0 Y#104(Retract from edge)
+G90(Absolute mode)
+
+(==== SET WORK ZERO AT CORNER ====)
+G4 P-1(Press START to set work zero)
+
+(Apply corner offset based on selection)
+(Corner 1: Front Left -X -Y)
+#130 = #120
+#131 = #121
+
+(Set work coordinate system G54)
+G10 L20 P1 X#130 Y#131
+
+(Move to work zero position)
+G0 X0 Y0
+
+(Display results)
+#1510 = #130
+#1511 = #131
+#1512 = #2070
+#1505 = -5000(Corner %.0f set: X=%.3f  Y=%.3f)
+
+M30

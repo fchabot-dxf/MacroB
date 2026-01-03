@@ -1,0 +1,47 @@
+(3D PROBE - Z AXIS TOP SURFACE)
+(Finds top surface of workpiece and sets Z zero)
+(Run probe-config first to set calibration values)
+
+(==== SETUP ====)
+(Position probe above workpiece surface before starting)
+(Ensure adequate clearance for safe probing)
+
+(Load probe configuration)
+#100 = #56(Probe tip diameter)
+#101 = #57(Safe retract distance)
+#102 = #58(Fast probe feedrate)
+#103 = #59(Slow probe feedrate)
+#104 = #60(Probe backoff distance)
+#105 = #61(Overtravel distance)
+
+(==== PROBE Z AXIS - TOP SURFACE ====)
+G4 P-1(Press START to probe Z top surface)
+
+G91(Incremental mode)
+G38.2 Z-#101 F#102(Fast probe -Z)
+G0 Z#104(Backoff)
+G38.2 Z-#105 F#103(Slow probe -Z)
+
+(Store Z position)
+#125 = #5063
+
+G0 Z#104(Retract from surface)
+G90(Absolute mode)
+
+(==== SET WORK ZERO AT TOP SURFACE ====)
+G4 P-1(Press START to set Z zero at top surface)
+
+(Set Z work coordinate system G54)
+G10 L20 P1 Z#125
+
+(Move to safe height above work zero)
+G0 Z5.0
+
+(Display results)
+#1510 = #125
+#1511 = 0
+#1512 = 0
+#1505 = -5000(Z Top Surface: %.3f  [Zero Set])
+
+(Z axis probing complete)
+M30

@@ -1,0 +1,57 @@
+(3D PROBE - SINGLE EDGE FINDER)
+(Probes a single edge and sets work zero)
+(Run probe-config first to set calibration values)
+
+(Edge Selection:)
+(1 = -X edge  2 = +X edge)
+(3 = -Y edge  4 = +Y edge)
+(5 = -Z top surface)
+
+#2070 = 1(Select edge 1-5:)
+
+(Load probe configuration)
+#100 = #56(Probe tip diameter)
+#101 = #57(Safe retract distance)
+#102 = #58(Fast probe feedrate)
+#103 = #59(Slow probe feedrate)
+#104 = #60(Probe backoff distance)
+#105 = #61(Overtravel distance)
+
+(Calculate probe tip radius)
+#110 = #100 / 2
+
+(==== PROBE EDGE ====)
+G4 P-1(Press START to probe edge)
+
+G91(Incremental mode)
+
+(Probe -X edge)
+G38.2 X-#101 F#102(Fast probe -X)
+G0 X#104(Backoff)
+G38.2 X-#105 F#103(Slow probe -X)
+
+(Store position with tip radius compensation)
+#120 = #5061 + #110
+#121 = #5062
+#122 = #5063
+
+G0 X#104(Retract from edge)
+G90(Absolute mode)
+
+(==== SET WORK ZERO ====)
+G4 P-1(Press START to set work zero at edge)
+
+(Set work coordinate based on edge selection)
+(For -X edge: set X=0 at probed position)
+G10 L20 P1 X#120
+
+(Move to work zero)
+G0 X0
+
+(Display results)
+#1510 = #120
+#1511 = #121
+#1512 = #122
+#1505 = -5000(Edge %.0f: X=%.3f  Y=%.3f  Z=%.3f)
+
+M30
