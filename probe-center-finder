@@ -1,0 +1,123 @@
+(3D PROBE - CENTER FINDER)
+(Finds workpiece center and sets work zero)
+(Probes opposite edges to calculate center)
+(Run probe-config first to set calibration values)
+
+(==== SETUP ====)
+(Position probe near first X edge before starting)
+
+(Load probe configuration)
+#100 = #56(Probe tip diameter)
+#101 = #57(Safe retract distance)
+#102 = #58(Fast probe feedrate)
+#103 = #59(Slow probe feedrate)
+#104 = #60(Probe backoff distance)
+#105 = #61(Overtravel distance)
+
+(Calculate probe tip radius)
+#110 = #100 / 2
+
+(==== PROBE X AXIS - FIRST EDGE ====)
+G4 P-1(Press START to probe first X edge)
+
+G91(Incremental mode)
+G38.2 X-#101 F#102(Fast probe -X)
+G0 X#104(Backoff)
+G38.2 X-#105 F#103(Slow probe -X)
+
+(Store first X edge position with compensation)
+#120 = 1
+#120 = #1925 + #110
+
+G0 X#104(Retract from edge)
+G90(Absolute mode)
+
+(==== JOG TO OPPOSITE X EDGE ====)
+G4 P-1(JOG to opposite X edge then press START)
+
+(==== PROBE X AXIS - OPPOSITE EDGE ====)
+G91(Incremental mode)
+G38.2 X#101 F#102(Fast probe +X)
+G0 X-#104(Backoff)
+G38.2 X#105 F#103(Slow probe +X)
+
+(Store second X edge position with compensation)
+#121 = 1
+#121 = #1925 - #110
+
+(Calculate X center)
+#130 = [#120 + #121] / 2
+
+G0 X-#104(Retract from edge)
+G90(Absolute mode)
+
+(==== JOG TO FIRST Y EDGE ====)
+G4 P-1(JOG near first Y edge then press START)
+
+(==== PROBE Y AXIS - FIRST EDGE ====)
+G91(Incremental mode)
+G38.2 Y-#101 F#102(Fast probe -Y)
+G0 Y#104(Backoff)
+G38.2 Y-#105 F#103(Slow probe -Y)
+
+(Store first Y edge position with compensation)
+#122 = 1
+#122 = #1926 + #110
+
+G0 Y#104(Retract from edge)
+G90(Absolute mode)
+
+(==== JOG TO OPPOSITE Y EDGE ====)
+G4 P-1(JOG to opposite Y edge then press START)
+
+(==== PROBE Y AXIS - OPPOSITE EDGE ====)
+G91(Incremental mode)
+G38.2 Y#101 F#102(Fast probe +Y)
+G0 Y-#104(Backoff)
+G38.2 Y#105 F#103(Slow probe +Y)
+
+(Store second Y edge position with compensation)
+#123 = 1
+#123 = #1926 - #110
+
+(Calculate Y center)
+#131 = [#122 + #123] / 2
+
+G0 Y-#104(Retract from edge)
+G90(Absolute mode)
+
+(==== CALCULATE WORKPIECE DIMENSIONS ====)
+#140 = #121 - #120(X dimension)
+#141 = #123 - #122(Y dimension)
+
+(==== SET WORK ZERO AT CENTER ====)
+G4 P-1(Press START to set work zero at center)
+
+(Detect active WCS and calculate offset addresses)
+#150 = 1(Prime variable)
+#150 = #578(Active WCS: 1=G54, 2=G55, etc)
+#151 = [#150 - 1] * 5(WCS stride offset)
+#152 = 805 + #151(Base address for active WCS)
+#153 = #152 + 1(Y offset address)
+
+(Set work coordinate system at center - active WCS)
+#[#152] = #130(Write X offset to active WCS)
+#[#153] = #131(Write Y offset to active WCS)
+
+(Move to work zero - center position)
+G0 X0 Y0
+
+(Display results - center coordinates)
+#1510 = #130
+#1511 = #131
+#1512 = 0
+#1505 = -5000(Center: X=%.3f  Y=%.3f)
+
+(Display workpiece dimensions)
+G4 P2(Pause 2 seconds)
+#1510 = #140
+#1511 = #141
+#1512 = 0
+#1505 = -5000(Size: X=%.3f  Y=%.3f)
+
+M30
