@@ -1,0 +1,164 @@
+(3D PROBE - FULL RECTANGLE MEASUREMENT)
+(Comprehensive workpiece probing cycle)
+(Probes all 4 edges: X1 > X2 > Y1 > Y2)
+(Calculates center and dimensions)
+(Run probe-config first to set calibration values)
+
+(==== INSTRUCTIONS ====)
+(1. Position probe near -X edge before starting)
+(2. Macro will guide you through all 4 edges)
+(3. Press START at each step to continue)
+(4. Work zero will be set at calculated center)
+
+(Load probe configuration)
+#100 = #56(Probe tip diameter)
+#101 = #57(Safe retract distance)
+#102 = #58(Fast probe feedrate)
+#103 = #59(Slow probe feedrate)
+#104 = #60(Probe backoff distance)
+#105 = #61(Overtravel distance)
+
+(Calculate probe tip radius)
+#110 = #100 / 2
+
+(==== STEP 1: PROBE -X EDGE ====)
+G4 P-1(STEP 1/4: Press START to probe -X edge)
+
+G91(Incremental mode)
+G38.2 X-#101 F#102(Fast probe -X)
+G0 X#104(Backoff)
+G38.2 X-#105 F#103(Slow probe -X)
+
+(Store -X edge position with compensation)
+#120 = 1
+#120 = #1925 + #110
+
+G0 X#104(Retract from edge)
+G90(Absolute mode)
+
+(Display progress)
+#1510 = #120
+#1511 = 1
+#1512 = 4
+#1505 = -5000(-X Edge: %.3f  [Step %.0f/%.0f])
+
+(==== STEP 2: JOG AND PROBE +X EDGE ====)
+G4 P-1(STEP 2/4: JOG to +X edge then START)
+
+G91(Incremental mode)
+G38.2 X#101 F#102(Fast probe +X)
+G0 X-#104(Backoff)
+G38.2 X#105 F#103(Slow probe +X)
+
+(Store +X edge position with compensation)
+#121 = 1
+#121 = #1925 - #110
+
+(Calculate X center and dimension)
+#130 = [#120 + #121] / 2
+#140 = #121 - #120
+
+G0 X-#104(Retract from edge)
+G90(Absolute mode)
+
+(Display progress)
+#1510 = #121
+#1511 = #140
+#1512 = 2
+#1505 = -5000(+X Edge: %.3f  Width: %.3f  [%.0f/4])
+
+(==== STEP 3: JOG AND PROBE -Y EDGE ====)
+G4 P-1(STEP 3/4: JOG to -Y edge then START)
+
+G91(Incremental mode)
+G38.2 Y-#101 F#102(Fast probe -Y)
+G0 Y#104(Backoff)
+G38.2 Y-#105 F#103(Slow probe -Y)
+
+(Store -Y edge position with compensation)
+#122 = 1
+#122 = #1926 + #110
+
+G0 Y#104(Retract from edge)
+G90(Absolute mode)
+
+(Display progress)
+#1510 = #122
+#1511 = 3
+#1512 = 4
+#1505 = -5000(-Y Edge: %.3f  [Step %.0f/%.0f])
+
+(==== STEP 4: JOG AND PROBE +Y EDGE ====)
+G4 P-1(STEP 4/4: JOG to +Y edge then START)
+
+G91(Incremental mode)
+G38.2 Y#101 F#102(Fast probe +Y)
+G0 Y-#104(Backoff)
+G38.2 Y#105 F#103(Slow probe +Y)
+
+(Store +Y edge position with compensation)
+#123 = 1
+#123 = #1926 - #110
+
+(Calculate Y center and dimension)
+#131 = [#122 + #123] / 2
+#141 = #123 - #122
+
+G0 Y-#104(Retract from edge)
+G90(Absolute mode)
+
+(Display progress)
+#1510 = #123
+#1511 = #141
+#1512 = 4
+#1505 = -5000(+Y Edge: %.3f  Length: %.3f  [%.0f/4])
+
+(==== SET WORK ZERO AT CENTER ====)
+G4 P-1(All edges probed! START to set zero at center)
+
+(Detect active WCS and calculate offset addresses)
+#150 = 1(Prime variable)
+#150 = #578(Active WCS: 1=G54, 2=G55, etc)
+#151 = [#150 - 1] * 5(WCS stride offset)
+#152 = 805 + #151(Base address for active WCS)
+#153 = #152 + 1(Y offset address)
+
+(Set work coordinate system at center - active WCS)
+#[#152] = #130(Write X offset to active WCS)
+#[#153] = #131(Write Y offset to active WCS)
+
+(Move to work zero position - center)
+G0 X0 Y0
+
+(==== DISPLAY FINAL RESULTS ====)
+(Center position)
+#1510 = #130
+#1511 = #131
+#1512 = 0
+#1505 = -5000(CENTER: X=%.3f  Y=%.3f)
+
+G4 P3(Pause 3 seconds)
+
+(Workpiece dimensions)
+#1510 = #140
+#1511 = #141
+#1512 = 0
+#1505 = -5000(SIZE: Width=%.3f  Length=%.3f)
+
+G4 P3(Pause 3 seconds)
+
+(Edge positions summary)
+#1510 = #120
+#1511 = #121
+#1512 = 0
+#1505 = -5000(X EDGES: -X=%.3f  +X=%.3f)
+
+G4 P3(Pause 3 seconds)
+
+#1510 = #122
+#1511 = #123
+#1512 = 0
+#1505 = -5000(Y EDGES: -Y=%.3f  +Y=%.3f)
+
+(Probing complete - work zero set at center)
+M30

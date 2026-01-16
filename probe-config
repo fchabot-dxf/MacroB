@@ -1,0 +1,23 @@
+(3D PROBE CONFIGURATION)
+(Configure probe settings and offsets)
+(Store calibration values in persistent memory)
+
+(==== PROBE CALIBRATION VALUES ====)
+
+#56 = 10.0(Probe tip diameter in mm:)
+#57 = 50.0(Safe retract distance in mm:)
+#58 = 150.0(Fast probe feedrate in mm/min:)
+#59 = 30.0(Slow probe feedrate in mm/min:)
+#60 = 5.0(Probe backoff distance in mm:)
+#61 = 2.0(Overtravel distance in mm:)
+
+(Display current configuration)
+#1510 = #56
+#1511 = #57
+#1512 = #58
+#1505 = -5000(Probe Dia: %.2f  Retract: %.2f  Fast Feed: %.0f)
+
+(Configuration saved to persistent memory)
+(Power cycle preserves these values)
+
+M30

@@ -1,0 +1,55 @@
+(3D PROBE - Z AXIS TOP SURFACE)
+(Finds top surface of workpiece and sets Z zero)
+(Run probe-config first to set calibration values)
+
+(==== SETUP ====)
+(Position probe above workpiece surface before starting)
+(Ensure adequate clearance for safe probing)
+
+(Load probe configuration)
+#100 = #56(Probe tip diameter)
+#101 = #57(Safe retract distance)
+#102 = #58(Fast probe feedrate)
+#103 = #59(Slow probe feedrate)
+#104 = #60(Probe backoff distance)
+#105 = #61(Overtravel distance)
+
+(==== PROBE Z AXIS - TOP SURFACE ====)
+G4 P-1(Press START to probe Z top surface)
+
+G91(Incremental mode)
+G38.2 Z-#101 F#102(Fast probe -Z)
+G0 Z#104(Backoff)
+G38.2 Z-#105 F#103(Slow probe -Z)
+
+(Store Z position)
+#125 = 1
+#125 = #1927
+
+G0 Z#104(Retract from surface)
+G90(Absolute mode)
+
+(==== SET WORK ZERO AT TOP SURFACE ====)
+G4 P-1(Press START to set Z zero at top surface)
+
+(Detect active WCS and calculate offset address)
+#150 = 1(Prime variable)
+#150 = #578(Active WCS: 1=G54, 2=G55, etc)
+#151 = [#150 - 1] * 5(WCS stride offset)
+#152 = 805 + #151(Base address for active WCS)
+#154 = #152 + 2(Z offset address)
+
+(Set Z work coordinate system - active WCS)
+#[#154] = #125(Write Z offset to active WCS)
+
+(Move to safe height above work zero)
+G0 Z5.0
+
+(Display results)
+#1510 = #125
+#1511 = 0
+#1512 = 0
+#1505 = -5000(Z Top Surface: %.3f  [Zero Set])
+
+(Z axis probing complete)
+M30
